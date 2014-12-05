@@ -39,3 +39,7 @@ gem 'spring',        group: :development
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+# Shopper specific Gemfile
+
+gem 'angular-rails-templates'
+gem 'bower-rails'
