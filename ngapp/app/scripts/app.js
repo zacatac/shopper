@@ -1,11 +1,23 @@
 'use strict';
 
-angular.module('notesApp', ['ngResource'])
+angular.module('shopApp', ['ngResource'])
+  .config(function ($routeProvider) {
+    $routeProvider
+      .when('/notes', {
+        templateUrl: 'views/notes.html',
+        controller: 'NotesCtrl'
+      })
+      .otherwise({
+        redirectTo: '/'
+      });
+  });
+
+angular.module('shopApp', ['ngResource'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
+        controller: 'BoardCtrl'
       })
       .otherwise({
         redirectTo: '/'
