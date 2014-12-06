@@ -9,6 +9,12 @@ class ApplicationController < ActionController::Base
     render text: "Rails Backend 1.0"
   end
 
+  require 'trello'  
+  Trello.configure do |trello|
+    trello.developer_public_key = Rails.application.config.trello_api_key
+    trello.member_token = Rails.application.config.trello_my_member_token
+  end  
+
 private
 
   #http://stackoverflow.com/questions/14734243/rails-csrf-protection-angular-js-protect-from-forgery-makes-me-to-log-out-on
@@ -20,3 +26,5 @@ private
     super || form_authenticity_token == request.headers['HTTP_X_XSRF_TOKEN']
   end
 end
+
+
