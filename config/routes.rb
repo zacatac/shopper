@@ -1,7 +1,7 @@
-Testapp::Application.routes.draw do
-
-  get "api/ping" => "application#ping"
-
-  resources :notes, path: 'api/notes'
-
+Shopper::Application.routes.draw do
+  
+  # get "api/ping" => "application#pinga"
+  scope '/api' do
+    resources :notes
+  end
 end

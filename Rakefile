@@ -3,7 +3,7 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-Testapp::Application.load_tasks
+Shopper::Application.load_tasks
 
 task :test do
   system("cd ngapp; grunt test")
