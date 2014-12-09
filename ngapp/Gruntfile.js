@@ -22,6 +22,12 @@ module.exports = function (grunt) {
   // load the proxy.
   grunt.loadNpmTasks('grunt-connect-proxy');
 
+  // Include source files in index.html
+  grunt.loadNpmTasks('grunt-include-source');
+
+  // Wire bower dependencies to index.html
+  grunt.loadNpmTasks('grunt-wiredep');
+
   // configurable paths
   var yeomanConfig = {
     app: 'app',
@@ -34,6 +40,31 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     yeoman: yeomanConfig,
+    wiredep: { 
+      app: {
+	src: '<%= yeoman.app %>/index.html'
+      }
+    },
+    includeSource: {
+      options: {
+	basePath: 'app',
+	baseUrl: '/',
+	html: {
+          js: '<script src="{filePath}"></script>',
+          css: '<link rel="stylesheet" type="text/css" href="{filePath}" />',
+	},
+      },
+      server: {
+	files: {
+	  '<%= yeoman.app %>/index.html': '<%= yeoman.app %>/views/template_index.html'
+	}
+      },
+      dist: {
+	files: {
+	  '<%= yeoman.dist %>/index.html': '<%= yeoman.app %>/views/template_index.html'
+	}
+      },
+    },
     watch: {
       coffee: {
         files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
@@ -50,9 +81,13 @@ module.exports = function (grunt) {
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
           '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
-          '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
+          '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',	    
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
+      },
+      includeSource: {
+	files: ['<%= yeoman.app %>/index.html'],
+	tasks: ['includeSource:server']
       }
     },
     connect: {
@@ -165,7 +200,7 @@ module.exports = function (grunt) {
       }
     },
     useminPrepare: {
-      html: '<%= yeoman.app %>/index.html',
+      html: '<%= yeoman.dist %>/index.html',
       options: {
         dest: '<%= yeoman.dist %>'
       }
@@ -301,6 +336,8 @@ module.exports = function (grunt) {
       'concurrent:server',
       'configureProxies',
       'connect:livereload',
+      'includeSource:server',
+      'wiredep',
       'open',
       'watch'
     ]);
@@ -318,6 +355,7 @@ module.exports = function (grunt) {
     'clean:dist',
     'useminPrepare',
     'concurrent:dist',
+    'includeSource:dist',
     'concat',
     'copy',
     'cdnify',
