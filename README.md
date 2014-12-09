@@ -5,6 +5,7 @@ A grocery shopping application that streamlines the process between deciding whi
 Built on [AngularJS](http://angularjs.org) and [Rails](http://rubyonrails.org/). Project layout pulled from [Emmanuel Oga's repo](https://github.com/EmmanuelOga/simple-angular-rails-app/)
 
 [Live demo](http://shopp.herokuapp.com/#/)
+
 Github [repository](https://github.com/zacatac/shopper/)
 
 While it is possible to include AngularJS as part of the rails assets, I
@@ -86,3 +87,6 @@ when restricting access to the cookies.
 Check
 [StackOverflow](http://stackoverflow.com/questions/14734243/rails-csrf-protection-angular-js-protect-from-forgery-makes-me-to-log-out-on)
 for some notes on the XSRF protection.
+
+http://bootsnipp.com/snippets/featured/accordion-list-group-menu
+https://www.twilio.com/blog/2014/09/gmail-api-oauth-rails.html
