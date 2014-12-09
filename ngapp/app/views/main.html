@@ -1,29 +1,129 @@
-<div class="row">
-  <div class="span5">
-    <form ng-submit="create(title, body)" class='well'>
+
+<div class="row" ng-init="shoppingList = []">
+  <div class="col-md-4">
+    <div ng-show="selected == null">
+      <!-- <div ng-show="(model.token == 'null') || (model.oauth == null);"> -->
+	<button title="Select" onclick="connect_and_return();" type="button" class="btn btn-primary">Connect to Trello</button>
+	<!-- </div> -->
+
+      <div ng-show="(model.token != 'null') && (model.oauth != null);">
+	<h2>Select a board</h2>
+	<div ng-repeat="board in boards">	
+	  <div class="well" ng-show="board.closed == false;">
+	    <div class="row">
+	      <div class="col-md-9">
+		<h3>{{board.name}}</h3>
+	      </div>
+	      <div class="col-md-3">
+		<button title="Select" ng-click="select($index)" type="button" class="btn btn-primary">Select</button>
+	      </div>
+	    </div>
+	  </div>
+	</div> <!-- ng-repeat -->
+      </div> <!-- ng-show -->
+      <!-- <a href="" title="Select" ng-click="select($index)" class="pull-right"></a> -->
+    </div>
+    <div ng-show="selected != null">
+      <h2>Selected Board</h2>
+      <h3><a href="{{selected['board'].url}}">{{selected['board'].name}}</a></h3>
+      <a href="" ng-click="selected = null; listCards = null;">Select another board</a>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <!-- <div class="span5"> -->
+    <!-- <form ng-submit="create(title, body)" class='well'>
     <h3>Shopper</h3>
-      <fieldset>
-        <input ng-model='title' type="text" class="input-xlarge" placeholder="Title..." required>
-        <textarea rows='10' ng-model='body' type="text" class="input-xlarge" placeholder="Text..." required></textarea>
-        <br/>
-        <button type="submit" class="btn">Submit</button>
-      </fieldset>
-    </form>
-    <h3>Selected</h3>
-    <h3>{{selected.name}}</h3>
-    <h4>{{selected.url}}</h4>
+    <fieldset>
+    <input ng-model='title' type="text" class="input-xlarge" placeholder="Title..." required>
+    <textarea rows='10' ng-model='body' type="text" class="input-xlarge" placeholder="Text..." required></textarea>
+    <br/>
+    <button type="submit" class="btn">Submit</button>
+    </fieldset>
+    </form> -->
+    <div ng-show="selected != null">
+      <div ng-show="listCards != null">
+	<h2>Selected list</h2>
+	<h3>{{listCards["list"].name}}</h3>
+	<a href="" ng-click="listCards = null;">Select another list</a>
+	<h3>Shopping List</h3>
+	<ul class="list-group">
+	  <div ng-repeat="item in shoppingList">	
+	      <li class="list-group-item">
+		<span class="glyphicon glyphicon-ok"></span>
+		{{ item.name }}
+		<div ng-show="shoppingData != null">
+		  {{ shoppingData[item.name][0]['Description'] }}
+		</div>
+		<a href="" ng-click="shoppingListRemove($index);"><span class="glyphicon glyphicon-remove pull-right"></span></a>
+	      </li>	
+	    </a>	  
+	  </div> <!-- ng-repeat -->
+	</ul> <!-- list-group -->
+	<button title="Shop" ng-click="goShopping()" type="button" class="btn btn-danger" class="">Go Shopping</button>
+	
+      </div>
+      <div ng-show="listCards == null">
+
+	<h3>Select a list</h3>
+	<div class="well" ng-repeat="list in selected['lists']">
+	  <div class="row">
+	    <div class="col-md-9">
+	      <h3>{{list.name}}</h3>
+	    </div>
+	    <div class="col-md-3">
+	      <button title="Select" ng-click="cards($index)" type="button" class="btn btn-primary" class="">Select</button>
+	    </div>
+	  </div>
+
+	</div>
+      </div>
+    </div>
   </div>
- <div class="span5 offset2">
-    <div class="well" ng-repeat="board in boards">
-      <a href="" title="Select" ng-click="select($index)" class="pull-right">Select</a>
-      <h3>{{board.name}}</h3>
-    <div>
+  <div ng-show="listCards != null;" class="col-md-4">    
+    <!-- {{listCards['cards']}} -->
+    <div ng-show="listCards['cards'].length == 0;">    
+      <h3>No Cards in this list!</h3>
+      <a href="" ng-click="listCards = null;">Select another list</a>
+    </div>
+    <div ng-show="listCards['cards'].length > 0;">
+      <h3>Select cards to include</h3>
+      <div id="key">
+	<span class="glyphicon glyphicon-ok"></span> = Checked off in Trello
+	<br>
+	<span class="glyphicon glyphicon-remove"></span> = Not checked off in Trello
+      </div>
+      <div class="well" ng-repeat="card in listCards['cards']">
+	<h3>{{ card.name }}</h3> 
+	<a href="" ng-click="addAll($index)">Add all</a>
+	<br><a href="" ng-click="addAllUnchecked($index)">Add all unchecked</a>
+	<div class="panel-group" id="accordion{{$index}}">
+	  <div ng-repeat="checklist in detailCardData[$index]['checklists']">	
+            <div class="panel panel-default">
+	      <div class="panel-heading">
+		<h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion{{$parent.$index}}" href="#collapse{{$parent.$index}}{{$index}}"><span class="glyphicon glyphicon-th-list">
+                  </span>{{checklist.name}}</a>
+		</h4>
+	      </div> <!-- panel-heading -->
+	      <div id="collapse{{$parent.$index}}{{$index}}" class="panel-collapse collapse in">
+		<ul class="list-group">
+		  <div ng-repeat="item in checklist['check_items']">	
+		    <a href="" ng-click="addItem($parent.$parent.$index,$parent.$index, $index)">
+		      
+		      <li class="list-group-item">
+			<span ng-show="item.state == 'incomplete'" class="glyphicon glyphicon-remove"></span>
+			<span ng-show="item.state == 'complete'" class="glyphicon glyphicon-ok"></span>
+			<span ng-show="(item.state != 'complete') && (item.state != 'incomplete')" class="glyphicon glyphicon-question-sign"></span>
+			{{ item.name }}
+		      </li>	
+		    </a>	  
+		  </div> <!-- ng-repeat -->
+		</ul> <!-- list-group -->
+	      </div> <!-- panel-collapse -->
+            </div> <!-- panel -->
+          </div> <!-- ng-repeat -->
+	</div> <!-- panel-group -->
+      </div> <!-- well -->
+    </div> <!-- ng-show -->
   </div>
-  <!-- <div class="span5 offset2">
-  <div class="well" ng-repeat="note in notes">
-  <a href="" title="Delete" ng-click="delete($index)" class="pull-right">Delete</a>
-  <h3>{{note.title}}</h3>
-  <p>{{note.body}}</p>
-  <div>
-  </div> -->
-<div>
+</div>
