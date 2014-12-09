@@ -13,3 +13,6 @@ gem 'jbuilder', '~> 1.2'
 # Shopper specific gems
 
 gem 'ruby-trello'
+gem 'omniauth'
+gem 'omniauth-trello'
+gem 'mechanize'
