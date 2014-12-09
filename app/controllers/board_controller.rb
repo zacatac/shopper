@@ -20,10 +20,21 @@ class BoardController < ApplicationController
   end
 
   def index
-    render json: Trello::Board.all
+    client = Trello::Client.new(
+      :developer_public_key => Rails.application.config.trello_api_key,
+      :member_token => params[:token]
+    )    
+    boards = client.get("/members/me/boards")
+    render json: boards
   end
 
   def show
-    render json: Trello::Board.all[0]
+    client = Trello::Client.new(
+      :developer_public_key => Rails.application.config.trello_api_key,
+      :member_token => params[:token]
+    )    
+    board = client.find(:boards, params[:id])
+    # board = Trello::Board.find(params[:id])
+    render json: {:board => board, :lists => board.lists} 
   end
 end

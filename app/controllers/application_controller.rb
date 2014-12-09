@@ -11,8 +11,12 @@ class ApplicationController < ActionController::Base
 
   require 'trello'  
   Trello.configure do |trello|
-    trello.developer_public_key = Rails.application.config.trello_api_key
-    trello.member_token = Rails.application.config.trello_my_member_token
+    trello.consumer_key = Rails.application.config.trello_api_key
+    trello.consumer_secret = Rails.application.config.trello_api_secret
+    trello.oauth_token = "TRELLO_OAUTH_TOKEN"
+    trello.oauth_token_secret = "TRELLO_OAUTH_TOKEN_SECRET"
+    # trello.developer_public_key = Rails.application.config.trello_api_key
+    # trello.member_token = "FORCED TO PUT THIS SO BASIC AUTH WILL BE RECOGNIZED"
   end  
 
 private
@@ -26,5 +30,3 @@ private
     super || form_authenticity_token == request.headers['HTTP_X_XSRF_TOKEN']
   end
 end
-
-
