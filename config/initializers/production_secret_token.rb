@@ -15,3 +15,4 @@ Shopper::Application.config.trello_api_key = ENV['TRELLO_API_KEY']
 Shopper::Application.config.trello_api_secret = ENV['TRELLO_API_SECRET']
 Shopper::Application.config.grocer_email = ENV['SAFEWAY_EMAIL']
 Shopper::Application.config.grocer_pass = ENV['SAFEWAY_PASS']
+
