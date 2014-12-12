@@ -91,7 +91,7 @@ angular.module('shopApp')
 angular.module('shopApp')
     .factory('Grocer', ['$resource', function($resource) {
     function Grocer(){
-    	this.service = $resource('/api/grocer/:id', {id: '@id', items: '@id'}, {
+    	this.service = $resource('/api/grocer/:id', {id: '@id', items: '@id', term: '@term', adding: '@adding'}, {
     	    'create':  { method: 'POST' },
     	    'index':   { method: 'GET', isArray: true },
     	    'show':    { method: 'GET', isArray: false },
@@ -101,8 +101,17 @@ angular.module('shopApp')
     	});
     }
         
-    Grocer.prototype.shop = function(items) {	
-    	return this.service.show({id: 1, items: JSON.stringify(items)});
+    Grocer.prototype.shop = function(items, callback) {	
+	callback = typeof callback !== 'undefined' ? callback : function(){};
+    	return this.service.show({id: 1, items: JSON.stringify(items)}, callback);
+    };
+
+    Grocer.prototype.add = function(id, term, callback) {	
+    	return this.service.update({id: id, term: term, adding: true, items: null}, callback);
+    };
+
+    Grocer.prototype.remove = function(id, term, callback) {	
+    	return this.service.update({id: id, term: term, adding: false, items: null}, callback);
     };
     
     return new Grocer();
@@ -113,7 +122,8 @@ angular.module('shopApp')
     .controller('BoardCtrl', 
 		['$scope', '$window', '$routeParams', '$location', '$cookieStore', 'Board', 'List', 'Card', 'Session', 'Grocer', 
 		 function ($scope, $window, $routeParams, $location, $cookieStore, Board, List, Card, Session, Grocer) {
-		         
+		     
+
 		     if ($routeParams.token != null){
 			 $cookieStore.put("trello_oauth_token", $routeParams.token);
 		     }
@@ -126,7 +136,9 @@ angular.module('shopApp')
 		     $scope.model = {
 			 token: window.localStorage.getItem('trello_token'),
 			 oauth: $cookieStore.get('trello_oauth_token'),
-			 timeout: window.localStorage.getItem('trello_token_timeout')
+			 timeout: window.localStorage.getItem('trello_token_timeout'),
+			 itemMap: {},
+			 isInCart: {}
 		     };
 		     if ($scope.model.token == null && $scope.model.oauth == null){
 			 return;
@@ -139,7 +151,7 @@ angular.module('shopApp')
 		     $scope.cards = function(index){
 			 var after_http  = function() {
 			     var detailCardData = [];
-	    		     for (var i = 0; i < listCards.cards.length; i++){		
+	    		     for (var i = 0; i < listCards.cards.length; i++){	
 	    		     	 var cardData = Card.one($scope.model.token, listCards['cards'][i].id);
 	    		     	 detailCardData.push(cardData);
 	    		     }
@@ -151,7 +163,14 @@ angular.module('shopApp')
 
 		     $scope.addItem = function(card_index, check_index, item_index){
 			 var item = $scope.detailCardData[card_index]['checklists'][check_index]['check_items'][item_index];
+			 $scope.model.itemMap[item.name] = 5;
+			 $scope.model.isInCart[item.name] = false;
 			 $scope.shoppingList.push(item);
+		     };
+		     
+		     $scope.removeCard = function(card_index){
+			 $scope.listCards['cards'].splice(card_index, 1);
+			 $scope.detailCardData.splice(card_index, 1);
 		     };
 		     
 		     $scope.addAll = function(card_index){
@@ -160,10 +179,12 @@ angular.module('shopApp')
 			 for (var i = 0; i < checklists.length; i++){
 			     items = checklists[i]['check_items'];
 			     for (var j = 0; j < items.length; j++){
+				 $scope.model.itemMap[item.name] = 5;
+				 $scope.model.isInCart[item.name] = false;
 				 $scope.shoppingList.push(items[j]);
 			     }
 			 }
-		     }
+		     };
 
 		     $scope.addAllUnchecked = function(card_index){
 			 var checklists = $scope.detailCardData[card_index]['checklists'];
@@ -173,20 +194,84 @@ angular.module('shopApp')
 			     for (var j = 0; j < items.length; j++){
 				 item = items[j];
 				 if (item.state === "incomplete"){
-				     $scope.shoppingList.push(items[j]);
+				     $scope.model.itemMap[item.name] = 5;
+				     $scope.model.isInCart[item.name] = false;
+				     $scope.shoppingList.push(item);
 				 }
 			     }
 			 }
-		     }
+		     };
+
 		     $scope.shoppingListRemove = function(index){
 			 $scope.shoppingList.splice(index, 1);			 
-		     }
-		     
-		     $scope.goShopping = function(){
+		     };
+		    
+		     var getNames = function() {
 			 var termsList = [];
 			 for (var i = 0; i < $scope.shoppingList.length; i++){
 			     termsList.push($scope.shoppingList[i].name);
 			 }
-			 $scope.shoppingData = Grocer.shop(termsList);
-		     }
+			 return termsList;
+		     }; 
+
+		     $scope.goShopping = function(){
+			 var callback = function() { 
+			     $scope.shoppingData = updatedData; 
+			     for (var k in $scope.model.isInCart){
+				 $scope.model.isInCart[k] = false;
+			     }
+			 };			 
+			 var updatedData  = Grocer.shop(getNames(), callback);
+		     };
+		     
+		     $scope.addToCart = function(item){
+			 Grocer.add(item.Id, item.Description.split("-")[0], function() {
+			     var callback = function() { 
+				 $scope.shoppingData = updatedData; 
+			     };
+			     var updatedData = Grocer.shop(getNames(), callback);    
+			 });
+		     };
+
+		     $scope.removeFromCart = function(item){
+			 Grocer.remove(item.Id, item.Description.split("-")[0], function() {
+			     var callback = function() { 
+				 $scope.shoppingData = updatedData; 
+			     };
+			     var updatedData = Grocer.shop(getNames(), callback);
+			 });
+		     };
+
+
+		     $scope.getItems = function(item_name) {
+			 try {
+			     return $scope.shoppingData[item_name].slice(0, $scope.model.itemMap[item_name]);
+			 } catch(err) { return $scope.shoppingData; }
+		     };
+
+		     $scope.moreItems = function(item_name) {
+			 $scope.model.itemMap[item_name] = Math.min($scope.shoppingData[item_name].length, $scope.model.itemMap[item_name] + 10);
+		     };
+
+		     $scope.lessItems = function(item_name) {		 
+			 $scope.model.itemMap[item_name] = Math.max(0, $scope.model.itemMap[item_name] - 10);
+		     };
+		     
+		     $scope.getQuantity = function(item_name, item_index) {
+			 var item_data;
+			 if (item_name in $scope.shoppingData){
+			     item_data = $scope.shoppingData[item_name][item_index];
+			 } else {
+			     return 0;
+			 }			 
+			 if ("Quantity" in item_data){
+			     var quantity = parseInt(item_data["Quantity"]);
+			     if (quantity > 0) {
+				 $scope.model.isInCart[item_name] = true;
+			     }
+			     return quantity
+			 } else {
+			     return 0;
+			 }			 
+		     };		     
 		 }]);
