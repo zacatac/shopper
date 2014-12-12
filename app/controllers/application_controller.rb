@@ -9,6 +9,13 @@ class ApplicationController < ActionController::Base
     render text: "Rails Backend 1.0"
   end
 
+  require 'capybara/poltergeist'
+  Capybara.register_driver :poltergeist do |app|
+    Capybara::Poltergeist::Driver.new(app, js_errors: false, phantomjs_options: ['--ssl-protocol=TLSv1', '--local-to-remote-url-access=yes'])
+  end
+  Capybara.default_driver = :poltergeist
+
+
   require 'trello'  
   Trello.configure do |trello|
     trello.consumer_key = Rails.application.config.trello_api_key
