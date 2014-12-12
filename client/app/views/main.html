@@ -1,17 +1,20 @@
 <div class="row" ng-init="shoppingList = []">
   <div class="col-md-6">
-    <div ng-show="selected == null">
-      <button title="Select" onclick="connect_and_return();" type="button" class="btn btn-primary">Connect to Trello</button>
-      <div ng-include="'views/board_select.html'"></div>
-    </div> <!-- ng-show selected -->
-    <div ng-show="selected != null">
-      <ul class="list-group">
-	<li class="list-group-item">
-	  <h2>Selected Board</h2>
-	  <a href="" ng-click="selected = null; listCards = null;">Select another board</a>
-	  <h3><a href="{{selected['board'].url}}">{{selected['board'].name}}</a></h3>     </li>
-      </ul>
-    </div> <!-- ng-show selected -->
+    <!-- <div ng-show="selected == null"> -->
+    <button title="Select" onclick="connect_and_return();" type="button" class="btn btn-primary">Connect to Trello</button>
+    <div ng-include="'views/board_select.html'"></div>
+    <!-- </div> --> <!-- ng-show selected -->
+    <!-- <div ng-show="selected != null"> -->
+    <ul class="list-group">
+      <li class="list-group-item">
+	<h2>Selected Board</h2>
+	<a href="" ng-click="selected = null; listCards = null;">Select another board</a>
+	<h3>
+	  <a href="{{selected['board'].url}}">{{selected['board'].name}}</a>
+	</h3>     
+      </li>
+    </ul>
+    <!-- </div> --> <!-- ng-show selected -->
     <div ng-show="listCards == null && selected != null">
       <div ng-include="'views/list_select.html'"></div>
     </div> <!-- ng-show listCards -->
