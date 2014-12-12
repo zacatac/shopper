@@ -1,8 +1,7 @@
 {
   "name": "notes",
   "version": "0.0.0",
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "connect-livereload": "~0.2.0",
     "grunt": "~0.4.1",
     "grunt-concurrent": "~0.3.0",
