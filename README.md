@@ -80,6 +80,7 @@ on heroku. The only task left is to get heroku to build properly.
    * heroku config:set TRELLO_API_SECRET=replacethiswithyourtrelloapisecret
    * heroku config:set SAFEWAY_EMAIL=replacethiswithyoursafewayaccountemail
    * heroku config:set SAFEWAY_PASS=replacethiswithyoursafewayaccountpassword
+   * heroku config:set NODE_ENV=production
 2. Define multibuild pack build type:
    * heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 3. Deploy! 
