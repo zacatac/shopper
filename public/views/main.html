@@ -1,0 +1,57 @@
+<div class="row" ng-init="shoppingList = []">
+  <div class="col-md-6">
+    <div ng-show="selected == null">
+      <button title="Select" onclick="connect_and_return();" type="button" class="btn btn-primary">Connect to Trello</button>
+      <div ng-include="'views/board_select.html'"></div>
+    </div> <!-- ng-show selected -->
+    <div ng-show="selected != null">
+      <ul class="list-group">
+	<li class="list-group-item">
+	  <h2>Selected Board</h2>
+	  <a href="" ng-click="selected = null; listCards = null;">Select another board</a>
+	  <h3><a href="{{selected['board'].url}}">{{selected['board'].name}}</a></h3>     </li>
+      </ul>
+    </div> <!-- ng-show selected -->
+    <div ng-show="listCards == null && selected != null">
+      <div ng-include="'views/list_select.html'"></div>
+    </div> <!-- ng-show listCards -->
+    <div ng-show="selected != null && listCards != null">
+      <ul class="list-group">
+	<li class="list-group-item">	  
+	  <h2>Selected list</h2>
+	  <a href="" ng-click="listCards = null;">Select another list</a>
+	  <h3>{{listCards["list"].name}}</h3>
+	</li>
+      </ul>
+    </div> <!-- ng-show selected -->
+    <div ng-show="listCards != null;">    
+      <div ng-show="listCards['cards'].length == 0;">    
+	<h3>No Cards in this list!</h3>
+	<a href="" ng-click="listCards = null;">Select another list</a>
+      </div>
+      <div ng-show="listCards['cards'].length > 0;">
+      <ul class="list-group">
+	<li class="list-group-item">	  
+	  <h3>Select cards to include</h3>
+	  <div id="key">
+	    <span class="glyphicon glyphicon-ok"></span> = Checked off in Trello
+	    <br>
+	    <span class="glyphicon glyphicon-remove"></span> = Not checked off in Trello
+	  </div>
+	</li>
+      </ul>
+	<div ng-include="'views/card_list.html'"></div>
+      </div> <!-- ng-show -->
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div ng-show="selected != null && listCards != null">
+      <ul class="list-group">
+	<li class="list-group-item">	  	  
+	  <div ng-include="'views/shopping_list.html'"></div>
+	  <button title="Shop" ng-click="goShopping()" type="button" class="btn btn-danger">Go Shopping</button>      
+	</li>
+      </ul>
+    </div>	
+  </div>
+</div>

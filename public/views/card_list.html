@@ -1,0 +1,38 @@
+<div class="well" ng-repeat="card in listCards['cards']">
+  <div class="pull-right">
+    <a href="" ng-click="removeCard($index)">
+      <span class="glyphicon glyphicon-remove"></span>
+    </a>
+  </div>
+  <h3>{{ card.name }}</h3> 
+  <a href="" ng-click="addAll($index)">Add all</a>
+  <br><a href="" ng-click="addAllUnchecked($index)">Add all unchecked</a>
+  <div class="panel-group" id="accordion{{$index}}">
+    <div ng-repeat="checklist in detailCardData[$index]['checklists']">	
+      <div class="panel panel-default">
+	<div class="panel-heading">
+	  <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion{{$parent.$index}}" href="#collapse{{$parent.$index}}{{$index}}">
+	      <span class="glyphicon glyphicon-th-list">
+              </span>{{checklist.name}}
+	    </a>
+	  </h4>
+	</div> <!-- panel-heading -->
+	<div id="collapse{{$parent.$index}}{{$index}}" class="panel-collapse collapse in">
+	  <ul class="list-group">
+	    <div ng-repeat="item in checklist['check_items']">	
+	      <a href="" ng-click="addItem($parent.$parent.$index,$parent.$index, $index)">			
+		<li class="list-group-item">
+		  <span ng-show="item.state == 'incomplete'" class="glyphicon glyphicon-remove"></span>
+		  <span ng-show="item.state == 'complete'" class="glyphicon glyphicon-ok"></span>
+		  <span ng-show="(item.state != 'complete') && (item.state != 'incomplete')" class="glyphicon glyphicon-question-sign"></span>
+		  {{ item.name }}
+		</li>	
+	      </a>	  
+	    </div> <!-- ng-repeat -->
+	  </ul> <!-- list-group -->
+	</div> <!-- panel-collapse -->
+      </div> <!-- panel -->
+    </div> <!-- ng-repeat -->
+  </div> <!-- panel-group -->
+</div> <!-- well -->
