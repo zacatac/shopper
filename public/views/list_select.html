@@ -1,0 +1,11 @@
+<h3>Select a list</h3>
+<div class="well" ng-repeat="list in selected['lists']">
+  <div class="row">
+    <div class="col-md-9">
+      <h3>{{list.name}}</h3>
+    </div> <!-- col-md-9 -->
+    <div class="col-md-3">
+      <button title="Select" ng-click="cards($index)" type="button" class="btn btn-primary" class="">Select</button>
+    </div> <!-- col-md-3 -->
+  </div> <!-- row -->
+</div> <!-- well -->
