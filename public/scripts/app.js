@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('shopApp', ['ngResource', 'ngCookies'])
+angular.module('shopApp', ['ngResource', 'ngCookies', 'ui.bootstrap'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
