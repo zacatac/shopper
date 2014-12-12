@@ -1,0 +1,58 @@
+<h3>Shopping List</h3>
+<div class="panel-group" id="accordion">
+  <div ng-repeat="item in shoppingList">	    
+    <div class="panel panel-default">
+      <div class="panel-heading">
+	<div class="panel-title" >
+	  <div class="pull-right">
+	    <a ng-click="shoppingListRemove($index);">
+	      <span class="glyphicon glyphicon-remove glyphicon-no-margin"></span>
+	    </a>  
+	  <!-- <div class="btn-group btn-group-sm" role="group" aria-label="...">
+	  <button type="button" ng-click="shoppingListRemove($index);" class="btn">
+	  <span class="glyphicon glyphicon-remove glyphicon-no-margin"></span>
+	  </button>
+	  <button type="button" class="btn btn-info">	
+	  <div ng-show="!expanded($index);">	    
+	  <span class="glyphicon glyphicon-chevron-right"></span>	
+	  </div>
+	  <div ng-show="expanded($index);">
+	  <span class="glyphicon glyphicon-chevron-down"></span>
+	  </div>
+	  </button>
+	  </div> -->
+	  </div>
+	  <a data-toggle="collapse" data-parent="#accordion{{$index}}" href="#collapse{{$index}}">
+	    <span ng-show="model.isInCart[item.name]" class="glyphicon glyphicon-ok"></span>	    
+	    <span  ng-show="!model.isInCart[item.name]" class="glyphicon glyphicon-remove"></span>	    	    
+	    {{ item.name }}
+	  </a>
+
+	</div> <!-- panel-title -->
+      </div> <!-- panel-heading -->
+      <div ng-show="shoppingData[item.name] != null">
+	<div id="collapse{{$index}}" class="panel-collapse collapse in">
+	  <ul class="list-group">
+	    <div ng-repeat="data in getItems(item.name)">	
+	      <li class="list-group-item">
+		{{ data['Description'] }}
+		<br>		
+		Current Quantity: {{ getQuantity(item.name, $index) }}
+		<br>		
+		{{ data['PricePerSellingUnit'] }} / {{ data['PriceDescription'] }}
+		<br>
+		<button title="addCart" type="button" class="btn btn-info" ng-click="addToCart(shoppingData[item.name][$index])">Add To Cart</button>
+		<button title="removeCart" type="button" class="btn btn-info" ng-click="removeFromCart(shoppingData[item.name][$index])">Remove From Cart</button>
+	      </li> <!-- list-group-item -->
+	    </div> <!-- ng-repeat -->
+
+	    <div class="btn-group" role="group" aria-label="...">
+	      <button title="viewMore" type="button" class="btn btn-default" ng-click="moreItems(item.name)">View More</button>
+	      <button title="viewLess" type="button" class="btn btn-default" ng-click="lessItems(item.name)">View Less</button>
+	    </div> <!-- btn-group -->
+	  </ul> <!-- list-group -->
+	</div> <!-- panel-collapse -->
+      </div> <!-- ng-show -->
+    </div> <!-- panel -->
+  </div> <!-- ng-repeat -->
+</div> <!-- panel-group -->
