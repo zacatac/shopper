@@ -1,6 +1,6 @@
 <div class="row" ng-init="shoppingList = []">
   <div class="col-md-6">
-    <div ng-show="selected == null">
+    <!-- <div ng-show="selected == null"> -->
       <button title="Select" onclick="connect_and_return()" type="button" class="btn btn-primary">Connect to Trello</button>
       <div ng-include="'views/board_select.html'"></div>
     </div> <!-- ng-show selected -->
@@ -11,8 +11,8 @@
 	  <a href="" ng-click="selected = null; listCards = null;">Select another board</a>
 	  <h3><a href="{{selected['board'].url}}">{{selected['board'].name}}</a></h3>     </li>
       </ul>
-    </div> <!-- ng-show selected -->
-    <div ng-show="listCards == null && selected != null">
+      <!-- </div> <!-- ng-show selected --> -->
+      <!-- <div ng-show="listCards == null && selected != null"> -->
       <div ng-include="'views/list_select.html'"></div>
     </div> <!-- ng-show listCards -->
     <div ng-show="selected != null && listCards != null">
@@ -23,7 +23,7 @@
 	  <h3>{{listCards["list"].name}}</h3>
 	</li>
       </ul>
-    </div> <!-- ng-show selected -->
+      <!-- </div> <!-- ng-show selected --> -->
     <div ng-show="listCards != null;">    
       <div ng-show="listCards['cards'].length == 0;">    
 	<h3>No Cards in this list!</h3>
