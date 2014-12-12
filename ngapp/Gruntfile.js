@@ -269,7 +269,8 @@ module.exports = function (grunt) {
             '.htaccess',
             'bower_components/**/*',
             'images/{,*/}*.{gif,webp,svg}',
-            'styles/fonts/*'
+            'styles/fonts/*',
+            'fonts/*',
           ]
         }, {
           expand: true,
@@ -305,16 +306,29 @@ module.exports = function (grunt) {
         html: ['<%= yeoman.dist %>/*.html']
       }
     },
-    ngmin: {
+    // ng-annotate tries to make the code safe for minification automatically
+    // by using the Angular long form for dependency injection.
+    ngAnnotate: {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= yeoman.dist %>/scripts',
-          src: '*.js',
+	  cwd: '<%= yeoman.dist %>/scripts',
+          src: ['*.js', '!oldieshim.js'],
           dest: '<%= yeoman.dist %>/scripts'
         }]
       }
     },
+     // Deprecated
+    // ngmin: {
+    //   dist: {
+    //     files: [{
+    //       expand: true,
+    //       cwd: '<%= yeoman.dist %>/scripts',
+    //       src: '*.js',
+    //       dest: '<%= yeoman.dist %>/scripts'
+    //     }]
+    //   }
+    // },
     uglify: {
       dist: {
         files: {
@@ -337,7 +351,6 @@ module.exports = function (grunt) {
       'configureProxies',
       'connect:livereload',
       'includeSource:server',
-      'wiredep',
       'open',
       'watch'
     ]);
@@ -355,14 +368,13 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
+    'includeSource:server',
     'includeSource:dist',
-    'wiredep',
     'useminPrepare',
     'concurrent:dist',
     'concat',
+    'ngAnnotate',
     'copy',
-    'cdnify',
-    'ngmin',
     'cssmin',
     'uglify',
     'rev',

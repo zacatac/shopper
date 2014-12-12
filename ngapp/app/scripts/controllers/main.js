@@ -1,11 +1,6 @@
 'use strict';
 
 angular.module('shopApp')
-    .factory('Note', function ($resource) {
-	return $resource('/api/notes/:noteId');
-    });
-
-angular.module('shopApp')
     .factory('Board', ['$resource', function($resource) {
     function Board(){
     	this.service = $resource('/api/board/:id', {id: '@id', token: '@token'}, {
