@@ -71,9 +71,23 @@ deffinitively look into that during development.
 
 ## Deploying
 
-If you run `grunt build`, grunt will package the whole angular app in a
-tidy package on the rails public/ folder. This packaging step could
-happen in the server to avoid having to commit the generated assets in
+I deployed the application on heroku, so I will give directions detailing that process.
+The repository already has the buildpacks, and grunt tasks necessary to get the app running
+on heroku. The only task left is to get heroku to build properly.
+1. Set configuration variables:
+   * heroku config:set SECRET_KEY_BASE=replacethiswithyourapplicationssecretkey
+   * heroku config:set TRELLO_API_KEY=replacethiswithyourtrelloapikey
+   * heroku config:set TRELLO_API_SECRET=replacethiswithyourtrelloapisecret
+   * heroku config:set SAFEWAY_EMAIL=replacethiswithyoursafewayaccountemail
+   * heroku config:set SAFEWAY_PASS=replacethiswithyoursafewayaccountpassword
+2. Define multibuild pack build type:
+   * heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
+3. Deploy! 
+   * git push heroku master
+
+The grunt task `build` will package the whole angular app in a
+tidy package on the rails public/ folder. This packaging step
+happens in the server to avoid having to commit the generated assets in
 your repository, analogous to how it is done for generating assets with
 rails' assets pipeline.
 
