@@ -76,9 +76,9 @@ angular.module('shopApp')
     	});
     }
         
-    Session.prototype.store = function(token) {
-	$scope.token = token
-    };
+    // Session.prototype.store = function(token) {
+    // 	return token;
+    // };
     
     return new Session();
 }]);
@@ -119,8 +119,8 @@ angular.module('shopApp')
 		 function ($scope, $window, $routeParams, $location, $cookieStore, Board, List, Card, Session, Grocer) {
 		     
 
-		     if ($routeParams.token != null){
-			 $cookieStore.put("trello_oauth_token", $routeParams.token);
+		     if ($routeParams.token !== null){
+			 $cookieStore.put('trello_oauth_token', $routeParams.token);
 		     }
 		     var timeout = new Date(window.localStorage.getItem('trello_token_timeout'));
 		     var current = new Date();
@@ -135,7 +135,7 @@ angular.module('shopApp')
 			 itemMap: {},
 			 isInCart: {}
 		     };
-		     if ($scope.model.token == null && $scope.model.oauth == null){
+		     if ($scope.model.token === null && $scope.model.oauth === null){
 			 return;
 		     }
 		     $scope.boards = Board.all($scope.model.token);
@@ -144,51 +144,53 @@ angular.module('shopApp')
 		     };
 
 		     $scope.cards = function(index){
-			 var after_http  = function() {
+			 var afterHttp  = function() {
 			     var detailCardData = [];
 	    		     for (var i = 0; i < listCards.cards.length; i++){	
-	    		     	 var cardData = Card.one($scope.model.token, listCards['cards'][i].id);
+	    		     	 var cardData = Card.one($scope.model.token, listCards.cards[i].id);
 	    		     	 detailCardData.push(cardData);
 	    		     }
 			     $scope.detailCardData = detailCardData;
 			 };
-			 var listCards = List.one($scope.model.token, $scope.selected['lists'][index].id, after_http);
+			 var listCards = List.one($scope.model.token, $scope.selected.lists[index].id, afterHttp);
 			 $scope.listCards = listCards;
 		     };
 
-		     $scope.addItem = function(card_index, check_index, item_index){
-			 var item = $scope.detailCardData[card_index]['checklists'][check_index]['check_items'][item_index];
+		     $scope.addItem = function(cardIndex, checkIndex, itemIndex){
+			 var item = $scope.detailCardData[cardIndex].checklists[checkIndex]['check_items'][itemIndex];
 			 $scope.model.itemMap[item.name] = 5;
 			 $scope.model.isInCart[item.name] = false;
 			 $scope.shoppingList.push(item);
 		     };
 		     
-		     $scope.removeCard = function(card_index){
-			 $scope.listCards['cards'].splice(card_index, 1);
-			 $scope.detailCardData.splice(card_index, 1);
+		     $scope.removeCard = function(cardIndex){
+			 $scope.listCards.cards.splice(cardIndex, 1);
+			 $scope.detailCardData.splice(cardIndex, 1);
 		     };
 		     
-		     $scope.addAll = function(card_index){
-			 var checklists = $scope.detailCardData[card_index]['checklists'];
+		     $scope.addAll = function(cardIndex){
+			 var checklists = $scope.detailCardData[cardIndex].checklists;
 			 var items;
 			 for (var i = 0; i < checklists.length; i++){
 			     items = checklists[i]['check_items'];
+			     var item;
 			     for (var j = 0; j < items.length; j++){
+				 item = items[j];
 				 $scope.model.itemMap[item.name] = 5;
 				 $scope.model.isInCart[item.name] = false;
-				 $scope.shoppingList.push(items[j]);
+				 $scope.shoppingList.push(item);
 			     }
 			 }
 		     };
 
-		     $scope.addAllUnchecked = function(card_index){
-			 var checklists = $scope.detailCardData[card_index]['checklists'];
+		     $scope.addAllUnchecked = function(cardIndex){
+			 var checklists = $scope.detailCardData[cardIndex].checklists;
 			 var items, item;
 			 for (var i = 0; i < checklists.length; i++){
 			     items = checklists[i]['check_items'];
 			     for (var j = 0; j < items.length; j++){
 				 item = items[j];
-				 if (item.state === "incomplete"){
+				 if (item.state === 'incomplete'){
 				     $scope.model.itemMap[item.name] = 5;
 				     $scope.model.isInCart[item.name] = false;
 				     $scope.shoppingList.push(item);
@@ -220,7 +222,7 @@ angular.module('shopApp')
 		     };
 		     
 		     $scope.addToCart = function(item){
-			 Grocer.add(item.Id, item.Description.split("-")[0], function() {
+			 Grocer.add(item.Id, item.Description.split('-')[0], function() {
 			     var callback = function() { 
 				 $scope.shoppingData = updatedData; 
 			     };
@@ -229,7 +231,7 @@ angular.module('shopApp')
 		     };
 
 		     $scope.removeFromCart = function(item){
-			 Grocer.remove(item.Id, item.Description.split("-")[0], function() {
+			 Grocer.remove(item.Id, item.Description.split('-')[0], function() {
 			     var callback = function() { 
 				 $scope.shoppingData = updatedData; 
 			     };
@@ -238,35 +240,58 @@ angular.module('shopApp')
 		     };
 
 
-		     $scope.getItems = function(item_name) {
+		     $scope.getItems = function(itemName) {
 			 try {
-			     return $scope.shoppingData[item_name].slice(0, $scope.model.itemMap[item_name]);
+			     return $scope.shoppingData[itemName].slice(0, $scope.model.itemMap[itemName]);
 			 } catch(err) { return $scope.shoppingData; }
 		     };
 
-		     $scope.moreItems = function(item_name) {
-			 $scope.model.itemMap[item_name] = Math.min($scope.shoppingData[item_name].length, $scope.model.itemMap[item_name] + 10);
+		     $scope.moreItems = function(itemName) {
+			 $scope.model.itemMap[itemName] = Math.min($scope.shoppingData[itemName].length, $scope.model.itemMap[itemName] + 10);
 		     };
 
-		     $scope.lessItems = function(item_name) {		 
-			 $scope.model.itemMap[item_name] = Math.max(0, $scope.model.itemMap[item_name] - 10);
+		     $scope.lessItems = function(itemName) {		 
+			 $scope.model.itemMap[itemName] = Math.max(0, $scope.model.itemMap[itemName] - 10);
 		     };
 		     
-		     $scope.getQuantity = function(item_name, item_index) {
-			 var item_data;
-			 if (item_name in $scope.shoppingData){
-			     item_data = $scope.shoppingData[item_name][item_index];
+		     $scope.getQuantity = function(itemName, itemIndex) {
+			 var itemData;
+			 if (itemName in $scope.shoppingData){
+			     itemData = $scope.shoppingData[itemName][itemIndex];
 			 } else {
 			     return 0;
 			 }			 
-			 if ("Quantity" in item_data){
-			     var quantity = parseInt(item_data["Quantity"]);
+			 if ('Quantity' in itemData){
+			     var quantity = parseInt(itemData.Quantity);
 			     if (quantity > 0) {
-				 $scope.model.isInCart[item_name] = true;
+				 $scope.model.isInCart[itemName] = true;
 			     }
-			     return quantity
+			     return quantity;
 			 } else {
 			     return 0;
 			 }			 
+		     };	
+		     Date.prototype.addHours= function(h){
+			 this.setHours(this.getHours()+h);
+			 return this;
+		     };
+		     
+		     $scope.connectAndReturn = function(){
+			 var onSuccess = function(){
+			     window.localStorage.setItem('trello_token_timeout', new Date().addHours(1));
+			     location.reload();
+			 };
+			 
+			 var onFail = function(){
+			     window.localStorage.setItem('trello_token', null);
+			     window.localStorage.setItem('trello_token_timeout', new Date());
+			 };
+			 Trello.authorize({
+    			     type:'popup',
+    			     name:'Shopper',
+    			     expiration:'1hour',
+    			     success:onSuccess,
+    			     error: onFail
+			 });
 		     };		     
 		 }]);

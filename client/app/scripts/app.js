@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('shopApp', ['ngResource', 'ngCookies', 'ui.bootstrap'])
-  .config(function ($routeProvider) {
+angular.module('shopApp', ['ngResource', 'ngCookies', 'ngRoute', 'ui.bootstrap'])
+  .config(['$routeProvider', function ($routeProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
@@ -14,4 +14,4 @@ angular.module('shopApp', ['ngResource', 'ngCookies', 'ui.bootstrap'])
       .otherwise({
         redirectTo: '/'
       });
-  });
+  }]);
