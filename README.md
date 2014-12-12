@@ -82,7 +82,7 @@ on heroku. The only task left is to get heroku to build properly.
    * heroku config:set SAFEWAY_PASS=replacethiswithyoursafewayaccountpassword
    * heroku config:set NODE_ENV=production
 2. Define multibuild pack build type:
-   * heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
+   * heroku config:add BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 3. Deploy! 
    * git push heroku master
 
@@ -92,7 +92,7 @@ happens in the server to avoid having to commit the generated assets in
 your repository, analogous to how it is done for generating assets with
 rails' assets pipeline.
 
-## XSRF support
+## XSRF support 
 
 The rails app sets the XSRF token in the cookies. The cookies are
 accessible even when using the proxy because the port is [not taken into
