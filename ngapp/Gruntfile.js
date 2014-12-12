@@ -356,6 +356,7 @@ module.exports = function (grunt) {
     'useminPrepare',
     'concurrent:dist',
     'includeSource:dist',
+    'wiredep',
     'concat',
     'copy',
     'cdnify',
